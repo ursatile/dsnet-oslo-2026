@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using Autobarn.Data;
+using Autobarn.Data.Entities;
 using Autobarn.Website.Api.Resources;
+using Autobarn.Website.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,4 +42,27 @@ public class VehiclesApiController(AutobarnDbContext db, LinkGenerator links) : 
 			.FirstOrDefaultAsync(v => v.Registration == registration, cancellationToken) is { } vehicle
 			? TypedResults.Ok(vehicle.ToResource(links, HttpContext))
 			: TypedResults.NotFound();
+
+	[HttpPost]
+	[EndpointSummary("Create a new vehicle")]
+	[EndpointName(Endpoints.POST_VEHICLE)]
+	[ProducesResponseType<Created<VehicleResource>>(StatusCodes.Status201Created, "application/hal+json")]
+	[ProducesResponseType<Conflict<string>>(StatusCodes.Status409Conflict)]
+	public async Task<Results<Created<VehicleResource>, BadRequest<string>, Conflict<string>>>
+		Post([FromBody] VehicleDto dto, CancellationToken cancellationToken) {
+		var model = await db.Models.FirstOrDefaultAsync(m => m.Code == $"{dto.ModelCode}", cancellationToken);
+		if (model is null) return TypedResults.BadRequest($"Invalid model code {dto.ModelCode}");
+		if (await db.Vehicles.AnyAsync(v => v.Registration == dto.Registration, cancellationToken: cancellationToken))
+			return TypedResults.Conflict<string>($"There is already a vehicle with registration {dto.Registration} in our database. Sorry.");
+		var vehicle = new Vehicle {
+			Registration = dto.Registration!,
+			Year = dto.Year!.Value,
+			Color = dto.Color,
+			Model = model
+		};
+		db.Vehicles.Add(vehicle);
+		await db.SaveChangesAsync(cancellationToken);
+		var createdVehicleResource = vehicle.ToResource(links, HttpContext);
+		return TypedResults.Created(createdVehicleResource.Links["self"].Href, createdVehicleResource);
+	}
 }

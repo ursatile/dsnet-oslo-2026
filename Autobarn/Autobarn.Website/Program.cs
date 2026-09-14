@@ -9,12 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // A named shared-cache in-memory database exists for as long as at least one connection to it is open,
 // so we hold this connection open for the lifetime of the app, and each DbContext opens its own connection.
-const string connectionString = "Data Source=autobarn;Mode=Memory;Cache=Shared";
+// const string connectionString = "Data Source=autobarn;Mode=Memory;Cache=Shared";
+const string connectionString = "Data Source=autobarn.db;Cache=Shared";
 await using var keepAliveConnection = new SqliteConnection(connectionString);
 await keepAliveConnection.OpenAsync();
 
 builder.Services.AddDbContext<AutobarnDbContext>(options => options.UseSqlite(connectionString));
-builder.Services.AddControllersWithViews(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+builder.Services.AddControllersWithViews(); // options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 builder.Services.AddOpenApi();
 builder.Services.AddValidation();
 

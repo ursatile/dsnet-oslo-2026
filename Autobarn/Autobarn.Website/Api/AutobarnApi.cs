@@ -3,8 +3,6 @@ using Autobarn.Data;
 using Autobarn.Website.Api.Resources;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileSystemGlobbing.Internal;
-using System.Net;
 
 namespace Autobarn.Website.Api;
 
@@ -48,15 +46,15 @@ public static class AutobarnApi {
 			async Task<Ok<ResourceList<VehicleMakeResource>>> (AutobarnDbContext db, LinkGenerator links, HttpContext http,
 				[Range(0, int.MaxValue)] int index = 0,
 				[Range(1, MAX_COUNT)] int count = DEFAULT_COUNT) => {
-				var total = await db.Makes.CountAsync(http.RequestAborted);
-				var makes = await db.Makes.AsNoTracking()
-					.OrderBy(m => m.Code)
-					.Skip(index).Take(count)
-					.ToListAsync(http.RequestAborted);
-				var items = makes.Select(m => m.ToResource(links, http)).ToList();
-				var pageLinks = Paginate(links, http, Endpoints.GET_MAKES, null, index, count, total);
-				return TypedResults.Ok(new ResourceList<VehicleMakeResource>(pageLinks, index, count, total, items));
-			})
+					var total = await db.Makes.CountAsync(http.RequestAborted);
+					var makes = await db.Makes.AsNoTracking()
+						.OrderBy(m => m.Code)
+						.Skip(index).Take(count)
+						.ToListAsync(http.RequestAborted);
+					var items = makes.Select(m => m.ToResource(links, http)).ToList();
+					var pageLinks = Paginate(links, http, Endpoints.GET_MAKES, null, index, count, total);
+					return TypedResults.Ok(new ResourceList<VehicleMakeResource>(pageLinks, index, count, total, items));
+				})
 			.WithName(Endpoints.GET_MAKES)
 			.WithSummary("List vehicle makes")
 			.WithDescription("Returns a page of the manufacturers whose vehicles appear in the Autobarn catalogue.")
@@ -77,17 +75,17 @@ public static class AutobarnApi {
 				string make,
 				[Range(0, int.MaxValue)] int index = 0,
 				[Range(1, MAX_COUNT)] int count = DEFAULT_COUNT) => {
-				if (!await db.Makes.AnyAsync(m => m.Code == make, http.RequestAborted)) return TypedResults.NotFound();
-				var query = db.Models.AsNoTracking().Where(m => m.MakeCode == make);
-				var total = await query.CountAsync(http.RequestAborted);
-				var models = await query
-					.OrderBy(m => m.Code)
-					.Skip(index).Take(count)
-					.ToListAsync(http.RequestAborted);
-				var items = models.Select(m => m.ToResource(links, http)).ToList();
-				var pageLinks = Paginate(links, http, Endpoints.GET_MODELS_BY_MAKE, new { make }, index, count, total);
-				return TypedResults.Ok(new ResourceList<VehicleModelResource>(pageLinks, index, count, total, items));
-			})
+					if (!await db.Makes.AnyAsync(m => m.Code == make, http.RequestAborted)) return TypedResults.NotFound();
+					var query = db.Models.AsNoTracking().Where(m => m.MakeCode == make);
+					var total = await query.CountAsync(http.RequestAborted);
+					var models = await query
+						.OrderBy(m => m.Code)
+						.Skip(index).Take(count)
+						.ToListAsync(http.RequestAborted);
+					var items = models.Select(m => m.ToResource(links, http)).ToList();
+					var pageLinks = Paginate(links, http, Endpoints.GET_MODELS_BY_MAKE, new { make }, index, count, total);
+					return TypedResults.Ok(new ResourceList<VehicleModelResource>(pageLinks, index, count, total, items));
+				})
 			.WithName(Endpoints.GET_MODELS_BY_MAKE)
 			.WithSummary("List vehicle models by make")
 			.WithDescription("Returns a page of the models built by the manufacturer with the given code, or 404 if no such manufacturer exists.")
@@ -108,19 +106,19 @@ public static class AutobarnApi {
 				string make, string model,
 				[Range(0, int.MaxValue)] int index = 0,
 				[Range(1, MAX_COUNT)] int count = DEFAULT_COUNT) => {
-				var modelCode = $"{make}-{model}";
-				if (!await db.Models.AnyAsync(m => m.MakeCode == make && m.Code == modelCode, http.RequestAborted)) return TypedResults.NotFound();
-				var query = db.Vehicles.AsNoTracking().Where(v => v.ModelCode == modelCode);
-				var total = await query.CountAsync(http.RequestAborted);
-				var vehicles = await query
-					.Include(v => v.Model)
-					.OrderBy(v => v.Registration)
-					.Skip(index).Take(count)
-					.ToListAsync(http.RequestAborted);
-				var items = vehicles.Select(v => v.ToResource(links, http)).ToList();
-				var pageLinks = Paginate(links, http, Endpoints.GET_VEHICLES_BY_MODEL, new { make, model }, index, count, total);
-				return TypedResults.Ok(new ResourceList<VehicleResource>(pageLinks, index, count, total, items));
-			})
+					var modelCode = $"{make}-{model}";
+					if (!await db.Models.AnyAsync(m => m.MakeCode == make && m.Code == modelCode, http.RequestAborted)) return TypedResults.NotFound();
+					var query = db.Vehicles.AsNoTracking().Where(v => v.ModelCode == modelCode);
+					var total = await query.CountAsync(http.RequestAborted);
+					var vehicles = await query
+						.Include(v => v.Model)
+						.OrderBy(v => v.Registration)
+						.Skip(index).Take(count)
+						.ToListAsync(http.RequestAborted);
+					var items = vehicles.Select(v => v.ToResource(links, http)).ToList();
+					var pageLinks = Paginate(links, http, Endpoints.GET_VEHICLES_BY_MODEL, new { make, model }, index, count, total);
+					return TypedResults.Ok(new ResourceList<VehicleResource>(pageLinks, index, count, total, items));
+				})
 			.WithName(Endpoints.GET_VEHICLES_BY_MODEL)
 			.WithSummary("List vehicles by model")
 			.WithDescription("Returns a page of the vehicles of the given model, or 404 if no such model exists.")
