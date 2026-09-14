@@ -3,6 +3,7 @@ using Autobarn.Website.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ await keepAliveConnection.OpenAsync();
 builder.Services.AddDbContext<AutobarnDbContext>(options => options.UseSqlite(connectionString));
 builder.Services.AddControllersWithViews(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 builder.Services.AddValidation();
+
+builder.Services.AddOpenApi();
 
 var app = builder.Build();
 app.Logger.LogInformation("Using in-memory database");
@@ -38,9 +41,10 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
+app.MapOpenApi();
+app.MapScalarApiReference();
 
-// app.MapAutobarnApi("/api");
-AutobarnApi.MapAutobarnApi(app, "/api");
+app.MapAutobarnApi("/api");
 
 app.MapControllerRoute(
 	name: "default",
