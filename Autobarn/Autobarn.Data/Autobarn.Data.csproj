@@ -11,6 +11,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Include="car_horn.wav" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.Data.Sqlite" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
 		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" />

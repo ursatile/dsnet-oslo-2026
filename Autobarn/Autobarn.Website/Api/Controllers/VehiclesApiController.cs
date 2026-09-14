@@ -7,12 +7,15 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+using System.Media;
+
 namespace Autobarn.Website.Api.Controllers;
 
 [ApiController]
 [Route("api/vehicles")]
 [Tags("Autobarn")]
 public class VehiclesApiController(AutobarnDbContext db, LinkGenerator links) : ControllerBase {
+	private static SoundPlayer player = new SoundPlayer(EmbeddedResource.OpenStream("car_horn.wav"));
 
 	[HttpGet(Name = Endpoints.GET_VEHICLES)]
 	[EndpointSummary("List vehicles")]
@@ -63,6 +66,7 @@ public class VehiclesApiController(AutobarnDbContext db, LinkGenerator links) : 
 		db.Vehicles.Add(vehicle);
 		await db.SaveChangesAsync(cancellationToken);
 		var createdVehicleResource = vehicle.ToResource(links, HttpContext);
+		// player.Play();
 		return TypedResults.Created(createdVehicleResource.Links["self"].Href, createdVehicleResource);
 	}
 }

@@ -8,10 +8,19 @@
 
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+	  <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
 	  <PackageReference Include="Scalar.AspNetCore" />
+	  <PackageReference Include="System.Windows.Extensions" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Autobarn.Data\Autobarn.Data.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Sounds\" />
 	</ItemGroup>
 </Project>

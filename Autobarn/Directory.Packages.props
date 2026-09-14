@@ -1,17 +1,16 @@
 <Project>
-
-	<PropertyGroup>
-		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
-		<PackageVersion Include="Microsoft.Data.Sqlite" Version="10.0.12" />
-		<PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.12" />
-		<PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.12" />
-		<PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.12" />
-		<PackageVersion Include="Scalar.AspNetCore" Version="2.17.3" />
-		<PackageVersion Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.53.3" />
-	</ItemGroup>
-
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Data.Sqlite" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.17.3" />
+    <PackageVersion Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.53.3" />
+    <PackageVersion Include="System.Windows.Extensions" Version="10.0.12" />
+  </ItemGroup>
 </Project>
