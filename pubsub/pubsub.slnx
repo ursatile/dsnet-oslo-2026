@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Messages/Messages.csproj" />
+  <Project Path="Publisher/Publisher.csproj" />
+  <Project Path="Subscriber/Subscriber.csproj" />
+</Solution>
