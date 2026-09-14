@@ -37,6 +37,17 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
+app.MapGet("/api/status", () => new {
+	hostname = Environment.MachineName,
+	datetime = DateTime.UtcNow
+});
+
+app.MapGet("/api/greeting", (string name = "World") => new {
+	greeting = $"Hello {name}"
+});
+
+app.MapGet("/api/makes", (AutobarnDbContext db) => db.Makes.ToList());
+
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}")
