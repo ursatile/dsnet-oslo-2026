@@ -10,10 +10,10 @@ namespace Autobarn.Website.Api;
 
 public static class AutobarnApi {
 
-	private const int DEFAULT_COUNT = 10;
-	private const int MAX_COUNT = 100;
+	internal const int DEFAULT_COUNT = 10;
+	internal const int MAX_COUNT = 100;
 
-	private static LinkList Paginate(LinkGenerator links, HttpContext http, string endpointName, object? routeValues,
+	internal static LinkList Paginate(LinkGenerator links, HttpContext http, string endpointName, object? routeValues,
 		int index, int count, int total) {
 		ArgumentOutOfRangeException.ThrowIfNegative(index);
 		ArgumentOutOfRangeException.ThrowIfNegativeOrZero(count);
@@ -43,36 +43,6 @@ public static class AutobarnApi {
 			.WithName(Endpoints.GET_API_ROOT)
 			.WithSummary("Autobarn API Discovery Endpoint")
 			.WithDescription("Returns a list of links to the other endpoints in the Autobarn API.");
-
-		api.MapGet("/vehicles",
-				async Task<Ok<ResourceList<VehicleResource>>> (AutobarnDbContext db, LinkGenerator links, HttpContext http,
-					[Range(0, int.MaxValue)] int index = 0,
-					[Range(1, MAX_COUNT)] int count = DEFAULT_COUNT) => {
-					var total = await db.Vehicles.CountAsync(http.RequestAborted);
-					var vehicles = await db.Vehicles.AsNoTracking()
-						.Include(v => v.Model)
-						.OrderBy(v => v.Registration)
-						.Skip(index).Take(count)
-						.ToListAsync(http.RequestAborted);
-					var items = vehicles.Select(v => v.ToResource(links, http)).ToList();
-					var pageLinks = Paginate(links, http, Endpoints.GET_VEHICLES, null, index, count, total);
-					return TypedResults.Ok(new ResourceList<VehicleResource>(pageLinks, index, count, total, items));
-				})
-			.WithName(Endpoints.GET_VEHICLES)
-			.WithSummary("List vehicles")
-			.WithDescription("Returns a page of the vehicles currently listed for sale at Autobarn.")
-			.ProducesValidationProblem();
-
-		api.MapGet("/vehicles/{registration}",
-			async Task<Results<Ok<VehicleResource>, NotFound>> (AutobarnDbContext db, LinkGenerator links, HttpContext http, string registration)
-				=> await db.Vehicles.AsNoTracking()
-					.Include(v => v.Model)
-					.FirstOrDefaultAsync(v => v.Registration == registration, http.RequestAborted) is { } vehicle
-					? TypedResults.Ok(vehicle.ToResource(links, http))
-					: TypedResults.NotFound())
-			.WithName(Endpoints.GET_VEHICLE)
-			.WithSummary("Find a vehicle")
-			.WithDescription("Returns the vehicle with the given registration plate, or 404 if no such vehicle is listed.");
 
 		api.MapGet("/makes",
 			async Task<Ok<ResourceList<VehicleMakeResource>>> (AutobarnDbContext db, LinkGenerator links, HttpContext http,
