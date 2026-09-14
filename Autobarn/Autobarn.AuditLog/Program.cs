@@ -1,0 +1,15 @@
+using Autobarn.AuditLog;
+using EasyNetQ;
+
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+var builder = Host.CreateApplicationBuilder(args);
+
+var rabbitmq = builder.Configuration.GetConnectionString("rabbitmq");
+builder.Services.AddEasyNetQ(rabbitmq);
+builder.Services.AddHostedService<AuditLogService>();
+
+var host = builder.Build();
+host.Run();

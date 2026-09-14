@@ -11,13 +11,14 @@ using var provider = serviceCollection.BuildServiceProvider();
 var bus = provider.GetRequiredService<IBus>();
 
 Console.WriteLine("Subscribing to messages...");
-await bus.PubSub.SubscribeAsync<Greeting>("subscriber", message => {
-	// if (message.Number % 5 == 0) {
-	// 	throw new Exception("Oops, something went wrong!");
-	// }
+var subscription = await bus.PubSub.SubscribeAsync<Greeting>("dylanbeattie-2", message => {
+	if (message.Number % 5 == 0) {
+		throw new Exception("Oops, something went wrong!");
+	}
 	Console.WriteLine($"Received: {message}");
 	player.Play();
 });
 
 Console.WriteLine("Press any key to exit...");
 Console.ReadKey();
+await subscription.DisposeAsync();

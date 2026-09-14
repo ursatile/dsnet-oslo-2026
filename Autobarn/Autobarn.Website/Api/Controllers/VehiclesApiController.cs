@@ -8,13 +8,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using System.Media;
+using Autobarn.Messages;
+using EasyNetQ;
 
 namespace Autobarn.Website.Api.Controllers;
 
 [ApiController]
 [Route("api/vehicles")]
 [Tags("Autobarn")]
-public class VehiclesApiController(AutobarnDbContext db, LinkGenerator links) : ControllerBase {
+public class VehiclesApiController(
+	AutobarnDbContext db,
+	LinkGenerator links,
+	IBus bus
+	) : ControllerBase {
 	private static SoundPlayer player = new SoundPlayer(EmbeddedResource.OpenStream("car_horn.wav"));
 
 	[HttpGet(Name = Endpoints.GET_VEHICLES)]
@@ -53,7 +59,9 @@ public class VehiclesApiController(AutobarnDbContext db, LinkGenerator links) : 
 	[ProducesResponseType<Conflict<string>>(StatusCodes.Status409Conflict)]
 	public async Task<Results<Created<VehicleResource>, BadRequest<string>, Conflict<string>>>
 		Post([FromBody] VehicleDto dto, CancellationToken cancellationToken) {
-		var model = await db.Models.FirstOrDefaultAsync(m => m.Code == $"{dto.ModelCode}", cancellationToken);
+		var model = await db.Models
+			.Include(m => m.VehicleMake)
+			.FirstOrDefaultAsync(m => m.Code == $"{dto.ModelCode}", cancellationToken);
 		if (model is null) return TypedResults.BadRequest($"Invalid model code {dto.ModelCode}");
 		if (await db.Vehicles.AnyAsync(v => v.Registration == dto.Registration, cancellationToken: cancellationToken))
 			return TypedResults.Conflict<string>($"There is already a vehicle with registration {dto.Registration} in our database. Sorry.");
@@ -65,8 +73,23 @@ public class VehiclesApiController(AutobarnDbContext db, LinkGenerator links) : 
 		};
 		db.Vehicles.Add(vehicle);
 		await db.SaveChangesAsync(cancellationToken);
+
+		await PublishNewVehicleMessage(vehicle);
+
 		var createdVehicleResource = vehicle.ToResource(links, HttpContext);
 		// player.Play();
 		return TypedResults.Created(createdVehicleResource.Links["self"].Href, createdVehicleResource);
+	}
+
+	private async Task PublishNewVehicleMessage(Vehicle vehicle) {
+		var message = new NewVehicleMessage {
+			Color = vehicle.Color,
+			Year = vehicle.Year,
+			Registration = vehicle.Registration,
+			Model = vehicle.Model.Name,
+			Make = vehicle.Model.VehicleMake.Name,
+			CreatedAt = DateTimeOffset.UtcNow
+		};
+		await bus.PubSub.PublishAsync(message);
 	}
 }

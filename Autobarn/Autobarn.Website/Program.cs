@@ -1,5 +1,6 @@
 using Autobarn.Data;
 using Autobarn.Website.Api;
+using EasyNetQ;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,9 @@ builder.Services.AddDbContext<AutobarnDbContext>(options => options.UseSqlite(co
 builder.Services.AddControllersWithViews(); // options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 builder.Services.AddOpenApi();
 builder.Services.AddValidation();
+
+var rabbitmq = builder.Configuration.GetConnectionString("rabbitmq");
+builder.Services.AddEasyNetQ(rabbitmq);
 
 var app = builder.Build();
 app.Logger.LogInformation("Using in-memory database");

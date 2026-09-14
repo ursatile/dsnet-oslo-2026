@@ -4,7 +4,9 @@
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
   </Folder>
+  <Project Path="Autobarn.AuditLog/Autobarn.AuditLog.csproj" Id="e1605760-9fa0-46d3-8c68-e5a1763d79fe" />
   <Project Path="Autobarn.Data/Autobarn.Data.csproj" />
   <Project Path="Autobarn.ExampleClient/Autobarn.ExampleClient.csproj" />
+  <Project Path="Autobarn.Messages/Autobarn.Messages.csproj" Id="cd047d34-a6f6-43d0-90eb-fc61f27ce4a7" />
   <Project Path="Autobarn.Website/Autobarn.Website.csproj" />
 </Solution>
