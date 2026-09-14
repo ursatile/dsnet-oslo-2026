@@ -1,0 +1,18 @@
+@model Vehicle
+@{
+	ViewData["Title"] = Model.Registration;
+}
+<h2 class="license-plate">@Model.Registration</h2>
+<hr />
+<dl>
+	<dt>Make:</dt>
+	<dd><a asp-controller="Makes" asp-action="Details" asp-route-id="@Model.Model.MakeCode">@Model.Model.VehicleMake.Name</a></dd>
+	<dt>Model:</dt>
+	<dd><a asp-controller="CarModels" asp-action="Details" asp-route-id="@Model.ModelCode">@Model.Model.Name</a></dd>
+	<dt>Year:</dt>
+	<dd>@Model.Year</dd>
+	<dt>Colour:</dt>
+	<dd>@Model.Color</dd>
+</dl>
+
+

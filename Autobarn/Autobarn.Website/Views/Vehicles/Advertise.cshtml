@@ -1,0 +1,35 @@
+@model VehicleDto
+
+@{
+	ViewData["Title"] = $"Sell your {Model.ModelName}";
+}
+<h4>Sell Your @Model.ModelName</h4>
+<form asp-controller="Vehicles" asp-action="Advertise" method="post" id="advertise-vehicle-form">
+	<input asp-for="ModelCode" />
+	<input asp-for="ModelName" type="hidden" />
+	Make &amp; Model: @Model.ModelName
+	<span asp-validation-for="ModelCode"></span>
+	<hr />
+	<p>
+		<label asp-for="Registration"></label>
+		<input asp-for="Registration" />
+		<span asp-validation-for="Registration"></span>
+	</p>
+	<p>
+		<label asp-for="Year"></label>
+		<input asp-for="Year" />
+		<span asp-validation-for="Year"></span>
+	</p>
+	<p>
+		<label asp-for="Color"></label>
+		<select asp-for="Color" asp-items="@(new SelectList(VehicleDto.Colors))">
+			<option value="">select...</option>
+		</select>
+		<span asp-validation-for="Color"></span>
+	</p>
+	<input type="submit" value="Advertise!" />
+</form>
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}

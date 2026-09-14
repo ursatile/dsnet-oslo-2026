@@ -1,0 +1,16 @@
+@model IEnumerable<Vehicle>
+@{
+	ViewData["Title"] = "Vehicles";
+}
+<h2>Vehicles</h2>
+@if (Model.Any()) {
+	<ul class="vehicles">
+		@foreach (var vehicle in Model) {
+			<li class="vehicle">
+				<a asp-controller="Vehicles" asp-action="Details" asp-route-id="@vehicle.Registration">@vehicle.Registration</a>
+			</li>
+		}
+	</ul>
+} else {
+	<p>No vehicles found.</p>
+}

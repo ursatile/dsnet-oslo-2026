@@ -1,0 +1,19 @@
+@model VehicleModel
+
+@{
+	ViewData["Title"] = $"{Model.VehicleMake.Name} {Model.Name}";
+}
+
+<h1>@Model.VehicleMake.Name @Model.Name</h1>
+<hr />
+@if (Model.Vehicles.Any()) {
+	<ul>
+		@foreach (var vehicle in Model.Vehicles) {
+			<li><a asp-controller="Vehicles" asp-action="Details" asp-route-id="@vehicle.Registration">@vehicle.Registration</a></li>
+		}
+	</ul>
+} else {
+	<p><em>We don't have any @Model.VehicleMake.Name @Model.Name cars for sale right now.</em></p>
+}
+<hr />
+<a asp-controller="Vehicles" asp-action="Advertise" asp-route-id="@Model.Code">Sell your @Model.VehicleMake.Name @Model.Name here</a>

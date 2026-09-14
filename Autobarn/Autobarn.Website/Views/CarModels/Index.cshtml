@@ -1,0 +1,22 @@
+@model List<VehicleModel>
+
+@{
+	ViewData["Title"] = "Models";
+}
+<h2>Vehicle Models</h2>
+@if (Model.Any()) {
+	foreach (var group in Model.GroupBy(m => m.VehicleMake).OrderBy(g => g.Key.Name)) {
+		<h3>@group.Key.Name</h3>
+		<ul>
+			@foreach (var carModel in group.OrderBy(m => m.Name)) {
+				<li>
+					<a asp-controller="CarModels" asp-action="Details" asp-route-id="@carModel.Code">
+						@carModel.VehicleMake.Name @carModel.Name
+					</a>
+				</li>
+			}
+		</ul>
+	}
+} else {
+	<p>There are no car models in the database.</p>
+}

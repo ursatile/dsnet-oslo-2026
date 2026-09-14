@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="Autobarn.Data/Autobarn.Data.csproj" />
+  <Project Path="Autobarn.Website/Autobarn.Website.csproj" />
+</Solution>
