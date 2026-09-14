@@ -1,4 +1,5 @@
 using Autobarn.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Autobarn.Website.Api {
 	public static class AutobarnApi {
@@ -15,7 +16,9 @@ namespace Autobarn.Website.Api {
 
 				routes.MapGet($"{prefix}/makes", (AutobarnDbContext db) => db.Makes.ToList());
 				routes.MapGet($"{prefix}/models", (AutobarnDbContext db) => db.Models.ToList());
-				routes.MapGet($"{prefix}/vehicles", (AutobarnDbContext db) => db.Vehicles.ToList());
+				routes.MapGet($"{prefix}/vehicles",
+					(AutobarnDbContext db) => db.Vehicles.Include(v => v.Model)
+						.ThenInclude(m => m.VehicleMake ).ToList());
 			}
 		}
 	}

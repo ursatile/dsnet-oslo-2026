@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Autobarn.Data.Entities;
 
 ///<summary>A manufacturer who builds vehicles, e.g. Nissan.</summary>
@@ -9,5 +11,6 @@ public class VehicleMake {
 	///<summary>The display name of this manufacturer, e.g. "Nissan"</summary>
 	public string Name { get; set; } = "";
 
+	[JsonIgnore]
 	public ICollection<VehicleModel> Models { get; set; } = [];
 }
