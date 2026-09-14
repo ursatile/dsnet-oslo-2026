@@ -1,4 +1,5 @@
 using Autobarn.Data;
+using Autobarn.Website.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -37,16 +38,9 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
-app.MapGet("/api/status", () => new {
-	hostname = Environment.MachineName,
-	datetime = DateTime.UtcNow
-});
 
-app.MapGet("/api/greeting", (string name = "World") => new {
-	greeting = $"Hello {name}"
-});
-
-app.MapGet("/api/makes", (AutobarnDbContext db) => db.Makes.ToList());
+// app.MapAutobarnApi("/api");
+AutobarnApi.MapAutobarnApi(app, "/api");
 
 app.MapControllerRoute(
 	name: "default",
