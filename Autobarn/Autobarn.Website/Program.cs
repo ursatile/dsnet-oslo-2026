@@ -15,9 +15,8 @@ await keepAliveConnection.OpenAsync();
 
 builder.Services.AddDbContext<AutobarnDbContext>(options => options.UseSqlite(connectionString));
 builder.Services.AddControllersWithViews(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
-builder.Services.AddValidation();
-
 builder.Services.AddOpenApi();
+builder.Services.AddValidation();
 
 var app = builder.Build();
 app.Logger.LogInformation("Using in-memory database");
