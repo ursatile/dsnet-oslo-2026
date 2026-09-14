@@ -44,6 +44,7 @@ app.MapOpenApi();
 app.MapScalarApiReference();
 
 app.MapAutobarnApi("/api");
+app.MapControllers();
 
 app.MapControllerRoute(
 	name: "default",
