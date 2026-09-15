@@ -17,6 +17,8 @@ public static class Extensions
 {
     private const string HealthEndpointPath = "/health";
     private const string AlivenessEndpointPath = "/alive";
+    private const string RabbitMqPublisherActivitySource = "RabbitMQ.Client.Publisher";
+    private const string RabbitMqSubscriberActivitySource = "RabbitMQ.Client.Subscriber";
 
     public static TBuilder AddServiceDefaults<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
@@ -62,6 +64,9 @@ public static class Extensions
             .WithTracing(tracing =>
             {
                 tracing.AddSource(builder.Environment.ApplicationName)
+                    // RabbitMQ.Client 7+ (used by EasyNetQ) has built-in ActivitySources for publish and deliver
+                    // operations, and propagates trace context in message headers.
+                    .AddSource(RabbitMqPublisherActivitySource, RabbitMqSubscriberActivitySource)
                     .AddAspNetCoreInstrumentation(tracing =>
                         // Exclude health check requests from tracing
                         tracing.Filter = context =>
