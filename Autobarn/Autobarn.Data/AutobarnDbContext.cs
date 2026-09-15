@@ -12,6 +12,8 @@ public class AutobarnDbContext(
 	public virtual DbSet<VehicleModel> Models { get; set; }
 	public virtual DbSet<Vehicle> Vehicles { get; set; }
 
+	public virtual DbSet<OutboxMessage> OutboxMessages { get; set; }
+
 	protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder) {
 		if (Database.IsSqlite()) {
 			configurationBuilder.Properties<string>().UseCollation("NOCASE");
@@ -19,6 +21,15 @@ public class AutobarnDbContext(
 	}
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder) {
+
+		modelBuilder.Entity<OutboxMessage>(entity => {
+			if (Database.IsSqlite()) {
+				entity.Property(m => m.Id).UseAutoincrement();
+			}
+			//if (Database.IsSqlServer()) {
+			//	entity.Property(m => m.Id).UseIdentityColumn(UInt32.MaxValue + 1L);
+			//}
+		});
 
 		modelBuilder.Entity<VehicleMake>(entity => {
 			entity.HasKey(e => e.Code);

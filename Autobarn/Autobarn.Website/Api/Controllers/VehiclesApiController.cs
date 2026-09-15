@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 using System.Media;
 using Autobarn.Messages;
+using Autobarn.Website.Services;
 using EasyNetQ;
 
 namespace Autobarn.Website.Api.Controllers;
@@ -19,7 +20,8 @@ namespace Autobarn.Website.Api.Controllers;
 public class VehiclesApiController(
 	AutobarnDbContext db,
 	LinkGenerator links,
-	IBus bus
+	// IBus bus - don't need this any more!
+	OutboxHostedService outbox
 	) : ControllerBase {
 	private static SoundPlayer player = new SoundPlayer(EmbeddedResource.OpenStream("car_horn.wav"));
 
@@ -71,17 +73,7 @@ public class VehiclesApiController(
 			Color = dto.Color,
 			Model = model
 		};
-		db.Vehicles.Add(vehicle);
-		await db.SaveChangesAsync(cancellationToken);
 
-		await PublishNewVehicleMessage(vehicle);
-
-		var createdVehicleResource = vehicle.ToResource(links, HttpContext);
-		// player.Play();
-		return TypedResults.Created(createdVehicleResource.Links["self"].Href, createdVehicleResource);
-	}
-
-	private async Task PublishNewVehicleMessage(Vehicle vehicle) {
 		var message = new NewVehicleMessage {
 			Color = vehicle.Color,
 			Year = vehicle.Year,
@@ -90,6 +82,15 @@ public class VehiclesApiController(
 			Make = vehicle.Model.VehicleMake.Name,
 			CreatedAt = DateTimeOffset.UtcNow
 		};
-		await bus.PubSub.PublishAsync(message);
+
+		db.OutboxMessages.Add(new OutboxMessage(message));
+		// Power failure here? It's fine!
+		db.Vehicles.Add(vehicle);
+		await db.SaveChangesAsync(cancellationToken);
+		outbox.WakeUpAndDoStuff();
+
+		var createdVehicleResource = vehicle.ToResource(links, HttpContext);
+		// player.Play();
+		return TypedResults.Created(createdVehicleResource.Links["self"].Href, createdVehicleResource);
 	}
 }

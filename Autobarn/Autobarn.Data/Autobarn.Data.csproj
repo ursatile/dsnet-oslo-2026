@@ -20,4 +20,8 @@
 		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Autobarn.Messages\Autobarn.Messages.csproj" />
+	</ItemGroup>
+
 </Project>

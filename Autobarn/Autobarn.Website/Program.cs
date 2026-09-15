@@ -1,5 +1,6 @@
 using Autobarn.Data;
 using Autobarn.Website.Api;
+using Autobarn.Website.Services;
 using EasyNetQ;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
@@ -11,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 // A named shared-cache in-memory database exists for as long as at least one connection to it is open,
 // so we hold this connection open for the lifetime of the app, and each DbContext opens its own connection.
 // const string connectionString = "Data Source=autobarn;Mode=Memory;Cache=Shared";
-const string connectionString = "Data Source=autobarn.db;Cache=Shared";
+const string connectionString = "Data Source=autobarndb;Cache=Shared";
 await using var keepAliveConnection = new SqliteConnection(connectionString);
 await keepAliveConnection.OpenAsync();
 
@@ -25,6 +26,11 @@ builder.AddServiceDefaults();
 var rabbitmq = builder.Configuration.GetConnectionString("rabbitmq");
 builder.Services.AddEasyNetQ(rabbitmq);
 
+// Register the OutboxHostedService as a singleton and also as a hosted service
+builder.Services.AddSingleton<OutboxHostedService>();
+builder.Services.AddHostedService(services
+	=> services.GetRequiredService<OutboxHostedService>());
+	
 var app = builder.Build();
 app.Logger.LogInformation("Using in-memory database");
 
