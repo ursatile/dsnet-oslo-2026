@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 var builder = Host.CreateApplicationBuilder(args);
 
 var rabbitmq = builder.Configuration.GetConnectionString("rabbitmq");
+Console.WriteLine(rabbitmq);
 builder.Services.AddEasyNetQ(rabbitmq);
 builder.Services.AddHostedService<AuditLogService>();
 

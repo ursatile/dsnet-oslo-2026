@@ -1,0 +1,21 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.4.0">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<UserSecretsId>e001e936-e08a-4f01-bf06-63402c198fec</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.RabbitMQ" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Autobarn.AuditLog\Autobarn.AuditLog.csproj" />
+	  <ProjectReference Include="..\Autobarn.Website\Autobarn.Website.csproj" />
+	</ItemGroup>
+
+
+</Project>

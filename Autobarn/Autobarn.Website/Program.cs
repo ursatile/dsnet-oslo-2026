@@ -20,6 +20,8 @@ builder.Services.AddControllersWithViews(); // options => options.Filters.Add(ne
 builder.Services.AddOpenApi();
 builder.Services.AddValidation();
 
+builder.AddServiceDefaults();
+
 var rabbitmq = builder.Configuration.GetConnectionString("rabbitmq");
 builder.Services.AddEasyNetQ(rabbitmq);
 

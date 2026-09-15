@@ -20,6 +20,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Autobarn.Data\Autobarn.Data.csproj" />
 		<ProjectReference Include="..\Autobarn.Messages\Autobarn.Messages.csproj" />
+		<ProjectReference Include="..\Autobarn.ServiceDefaults\Autobarn.ServiceDefaults.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
