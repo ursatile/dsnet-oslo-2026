@@ -36,5 +36,7 @@ class PricingClientService(
 		};
 		var reply = await grpc.GetPriceAsync(priceRequest);
 		logger.LogInformation("Price for new vehicle: {price} {currency}", reply.Price, reply.CurrencyCode);
+		var newVehiclePriceMessage = message.WithPrice(reply.Price, reply.CurrencyCode, reply.Timestamp.ToDateTimeOffset());
+		await bus.PubSub.PublishAsync(newVehiclePriceMessage);
 	}
 }

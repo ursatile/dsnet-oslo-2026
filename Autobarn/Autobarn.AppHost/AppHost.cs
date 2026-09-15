@@ -37,6 +37,18 @@ builder.AddProject<Projects.Autobarn_AuditLog>("auditlog")
 	.WithReference(rabbitmq)
 	.WaitFor(rabbitmq);
 
+var website = builder.AddProject<Projects.Autobarn_Website>("autobarn-website")
+	.WaitFor(rabbitmq)
+	.WithReference(rabbitmq)
+	.WithHttpEndpoint(name: ConfigKeys.AutobarnWebsiteUrl);
+
+builder.AddProject<Projects.Autobarn_Notifier>("notifier")
+	.WithReference(rabbitmq)
+	.WaitFor(rabbitmq)
+	.WithReference(website)
+	.WithEnvironment(ConfigKeys.AutobarnWebsiteUrl, website.GetEndpoint(ConfigKeys.AutobarnWebsiteUrl))
+	.WaitFor(website);
+
 builder.AddProject<Projects.Autobarn_PricingClient>("pricing-client")
 	.WithReference(rabbitmq)
 	.WaitFor(rabbitmq)
@@ -47,8 +59,6 @@ builder.AddProject<Projects.Autobarn_PricingClient>("pricing-client")
 		nodePricingServer.GetEndpoint("https"));
 	// pricingServer.GetEndpoint(ConfigKeys.GrpcPricingServerUrl));
 
-var website = builder.AddProject<Projects.Autobarn_Website>("autobarn-website")
-	.WaitFor(rabbitmq)
-	.WithReference(rabbitmq);
+
 
 builder.Build().Run();

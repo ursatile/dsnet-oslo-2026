@@ -9,6 +9,7 @@
   <Project Path="Autobarn.Data/Autobarn.Data.csproj" />
   <Project Path="Autobarn.ExampleClient/Autobarn.ExampleClient.csproj" />
   <Project Path="Autobarn.Messages/Autobarn.Messages.csproj" Id="cd047d34-a6f6-43d0-90eb-fc61f27ce4a7" />
+  <Project Path="Autobarn.Notifier/Autobarn.Notifier.csproj" />
   <Project Path="Autobarn.PricingClient/Autobarn.PricingClient.csproj" />
   <Project Path="Autobarn.PricingServer/Autobarn.PricingServer.csproj" />
   <Project Path="Autobarn.ServiceDefaults/Autobarn.ServiceDefaults.csproj" />

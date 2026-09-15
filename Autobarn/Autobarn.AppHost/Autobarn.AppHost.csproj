@@ -15,6 +15,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Autobarn.AuditLog\Autobarn.AuditLog.csproj" />
+	  <ProjectReference Include="..\Autobarn.Notifier\Autobarn.Notifier.csproj" />
 	  <ProjectReference Include="..\Autobarn.PricingClient\Autobarn.PricingClient.csproj" />
 	  <ProjectReference Include="..\Autobarn.PricingServer\Autobarn.PricingServer.csproj" />
 	  <ProjectReference Include="..\Autobarn.ServiceDefaults\Autobarn.ServiceDefaults.csproj" IsAspireProjectResource="false" />

@@ -1,6 +1,7 @@
 using Autobarn.Data;
 using Autobarn.ServiceDefaults;
 using Autobarn.Website.Api;
+using Autobarn.Website.Hubs;
 using Autobarn.Website.Services;
 using EasyNetQ;
 using Microsoft.Data.Sqlite;
@@ -20,6 +21,7 @@ builder.Services.AddDbContext<AutobarnDbContext>(options => options.UseSqlite(CO
 builder.Services.AddControllersWithViews(); // options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 builder.Services.AddOpenApi();
 builder.Services.AddValidation();
+builder.Services.AddSignalR();
 
 builder.AddServiceDefaults();
 
@@ -58,6 +60,7 @@ app.MapScalarApiReference();
 
 app.MapAutobarnApi("/api");
 app.MapControllers();
+app.MapHub<AutobarnHub>("/hub");
 
 app.MapControllerRoute(
 	name: "default",
