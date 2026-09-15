@@ -1,4 +1,5 @@
 using Autobarn.AuditLog;
+using Autobarn.ServiceDefaults;
 using EasyNetQ;
 
 using Microsoft.Extensions.Configuration;

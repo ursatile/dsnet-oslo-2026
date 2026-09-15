@@ -1,0 +1,25 @@
+{
+  "name": "autobarn-pricing-server-node",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Autobarn gRPC pricing server (Node.js), using the Pricer contract from Autobarn.PricingServer/Protos/price.proto",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev-cert": "node -e \"require('fs').mkdirSync('certs',{recursive:true})\" && dotnet dev-certs https --export-path certs/localhost.pem --format Pem --no-password"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.14.4",
+    "@grpc/proto-loader": "^0.8.1",
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/instrumentation-grpc": "^0.222.0",
+    "@opentelemetry/instrumentation-pino": "^0.68.0",
+    "@opentelemetry/instrumentation-runtime-node": "^0.35.0",
+    "@opentelemetry/sdk-node": "^0.222.0",
+    "pino": "^10.3.1"
+  }
+}

@@ -1,8 +1,8 @@
 using Autobarn.Data;
+using Autobarn.ServiceDefaults;
 using Autobarn.Website.Api;
 using Autobarn.Website.Services;
 using EasyNetQ;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -12,11 +12,11 @@ var builder = WebApplication.CreateBuilder(args);
 // A named shared-cache in-memory database exists for as long as at least one connection to it is open,
 // so we hold this connection open for the lifetime of the app, and each DbContext opens its own connection.
 // const string connectionString = "Data Source=autobarn;Mode=Memory;Cache=Shared";
-const string connectionString = "Data Source=autobarndb;Cache=Shared";
-await using var keepAliveConnection = new SqliteConnection(connectionString);
+const string CONNECTION_STRING = "Data Source=autobarndb;Cache=Shared";
+await using var keepAliveConnection = new SqliteConnection(CONNECTION_STRING);
 await keepAliveConnection.OpenAsync();
 
-builder.Services.AddDbContext<AutobarnDbContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddDbContext<AutobarnDbContext>(options => options.UseSqlite(CONNECTION_STRING));
 builder.Services.AddControllersWithViews(); // options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 builder.Services.AddOpenApi();
 builder.Services.AddValidation();

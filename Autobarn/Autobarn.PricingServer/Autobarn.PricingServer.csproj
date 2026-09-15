@@ -3,6 +3,10 @@
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Autobarn.ServiceDefaults\Autobarn.ServiceDefaults.csproj" />
+  </ItemGroup>
 	<ItemGroup>
 		<Protobuf Include="Protos\price.proto" GrpcServices="Server" />
 	</ItemGroup>
