@@ -50,6 +50,7 @@ public class OutboxHostedService(
 				switch (messageRecord.MessageType) {
 					case nameof(NewVehicleMessage):
 						try {
+							if (Random.Shared.Next(5) == 2) throw new("Distributed Systems are hard.");
 							var message = JsonSerializer.Deserialize<NewVehicleMessage>(messageRecord.MessageJson);
 							await bus.PubSub.PublishAsync(message, workToken);
 							messageRecord.SentAt = DateTimeOffset.UtcNow;
@@ -60,6 +61,7 @@ public class OutboxHostedService(
 							messageRecord.SentAt = null;
 							messageRecord.FailureCount++;
 							messageRecord.FailureMessage = ex.Message;
+							logger.LogWarning(ex, "Failed to send message {message}", messageRecord);
 						} finally {
 							try {
 								await db.OutboxMessages

@@ -1,11 +1,11 @@
 using Autobarn.PricingClient;
 using Autobarn.PricingEngine;
+using Autobarn.ServiceDefaults;
 using EasyNetQ;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using OpenTelemetry.Trace;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -15,7 +15,7 @@ var rabbitmq = builder.Configuration.GetConnectionString("rabbitmq");
 builder.Services.AddEasyNetQ(rabbitmq);
 builder.Services.AddHostedService<PricingClientService>();
 
-var grpc = builder.Configuration["grpc"] ?? "http://localhost:5002";
+var grpc = builder.Configuration[ConfigKeys.GrpcPricingServerUrl] ?? "http://localhost:5002";
 var channel = GrpcChannel.ForAddress(grpc);
 var pricerClient = new Pricer.PricerClient(channel);
 builder.Services.AddSingleton(pricerClient);
