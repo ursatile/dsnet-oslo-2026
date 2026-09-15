@@ -15,7 +15,9 @@ Console.WriteLine(rabbitmq);
 builder.Services.AddEasyNetQ(rabbitmq);
 builder.Services.AddHostedService<NotifierService>();
 
-var websiteUrl = builder.Configuration[ConfigKeys.AutobarnWebsiteUrl] ?? "https://localhost:5001";
+var websiteUrl = builder.Configuration[ConfigKeys.AutobarnWebsiteUrl]
+                 ?? "https://autobarn.dev";
+
 var uriBuilder = new UriBuilder(websiteUrl) { Path = "hub" };
 
 var hub = new HubConnectionBuilder().WithUrl(uriBuilder.Uri).Build();

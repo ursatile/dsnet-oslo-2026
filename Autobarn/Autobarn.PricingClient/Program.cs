@@ -15,7 +15,8 @@ var rabbitmq = builder.Configuration.GetConnectionString("rabbitmq");
 builder.Services.AddEasyNetQ(rabbitmq);
 builder.Services.AddHostedService<PricingClientService>();
 
-var grpc = builder.Configuration[ConfigKeys.GrpcPricingServerUrl] ?? "http://localhost:5002";
+var grpc = builder.Configuration[ConfigKeys.GrpcPricingServerUrl]
+           ?? "https://grpc.autobarn.dev";
 var channel = GrpcChannel.ForAddress(grpc);
 var pricerClient = new Pricer.PricerClient(channel);
 builder.Services.AddSingleton(pricerClient);

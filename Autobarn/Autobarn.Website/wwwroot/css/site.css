@@ -85,3 +85,36 @@ body {
 li:has(a[href*='scalar']) {
 	margin-left: auto;
 }
+
+
+div#signalr-notifications {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 5;
+	width: 240px;
+	height: auto;
+
+	div {
+		border: 1px solid #000;
+		border-radius: 8px;
+		width: 240px;
+		padding: 8px;
+		margin-bottom: 8px;
+		font-size: 80%;
+
+		background-color: var(--background-color);
+		color: hsl(from var(--background-color) calc(h + 180) s calc(100 - l));
+
+		&.show {
+			opacity: 1;
+		}
+
+		&.hide {
+			opacity: 0;
+			transition: opacity 1000ms;
+		}
+	}
+}
+
+
