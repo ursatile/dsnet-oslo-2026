@@ -11,6 +11,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\Autobarn.Messages\Autobarn.Messages.csproj" />
+	  <ProjectReference Include="..\Autobarn.ServiceDefaults\Autobarn.ServiceDefaults.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="appsettings.json">

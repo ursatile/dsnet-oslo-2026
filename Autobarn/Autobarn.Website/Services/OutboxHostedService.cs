@@ -3,6 +3,7 @@ using Autobarn.Data.Entities;
 using Autobarn.Messages;
 using EasyNetQ;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using System.Text.Json;
 
 namespace Autobarn.Website.Services;
@@ -11,6 +12,9 @@ public class OutboxHostedService(
 	IServiceProvider services,
 	ILogger<OutboxHostedService> logger
 ) : BackgroundService {
+	// ServiceDefaults registers an ActivitySource named after the application (i.e. the assembly name) for tracing
+	private static readonly ActivitySource activitySource = new(typeof(OutboxHostedService).Assembly.GetName().Name!);
+
 	private int checks = 0;
 
 	private CancellationTokenSource sleepTokenSource = new();
@@ -42,6 +46,7 @@ public class OutboxHostedService(
 				messageRecord = null;
 			}
 			if (messageRecord != null) {
+				using var activity = StartSendActivity(messageRecord);
 				switch (messageRecord.MessageType) {
 					case nameof(NewVehicleMessage):
 						try {
@@ -50,6 +55,8 @@ public class OutboxHostedService(
 							messageRecord.SentAt = DateTimeOffset.UtcNow;
 							logger.LogInformation("Message {message} sent at {sent}", message, messageRecord.SentAt);
 						} catch (Exception ex) {
+							activity?.AddException(ex);
+							activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
 							messageRecord.SentAt = null;
 							messageRecord.FailureCount++;
 							messageRecord.FailureMessage = ex.Message;
@@ -84,5 +91,15 @@ public class OutboxHostedService(
 			sleepTokenSource = new();
 		}
 		logger.LogInformation("Stopping OutboxHostedService...");
+	}
+
+	// Continue the trace of the request that wrote the message to the outbox, so the publish (and the
+	// subscriber's deliver span, via RabbitMQ message headers) show up in the same trace as that request.
+	private static Activity? StartSendActivity(OutboxMessage messageRecord) {
+		ActivityContext.TryParse(messageRecord.TraceParent, messageRecord.TraceState, out var parentContext);
+		return activitySource.StartActivity($"outbox send {messageRecord.MessageType}", ActivityKind.Internal, parentContext)
+			?.SetTag("outbox.message.id", messageRecord.Id)
+			.SetTag("outbox.message.type", messageRecord.MessageType)
+			.SetTag("outbox.message.failure_count", messageRecord.FailureCount);
 	}
 }
