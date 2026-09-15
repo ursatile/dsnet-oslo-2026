@@ -1,4 +1,5 @@
 using Autobarn.Messages;
+using Autobarn.PricingEngine;
 using EasyNetQ;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -6,9 +7,11 @@ using Microsoft.Extensions.Logging;
 namespace Autobarn.PricingClient;
 
 class PricingClientService(
-	IBus bus, ILogger<PricingClientService> logger
+	IBus bus,
+	Pricer.PricerClient grpc,
+	ILogger<PricingClientService> logger
 ) : IHostedService {
-	private const string SUBSCRIBER_ID = "autobarn.PricingClient";
+	private const string SUBSCRIBER_ID = "Autobarn.PricingClient";
 	private SubscriptionResult subscription;
 
 	public async Task StartAsync(CancellationToken cancellationToken) {
@@ -23,7 +26,15 @@ class PricingClientService(
 	}
 
 	private async Task HandleNewVehicleMessage(NewVehicleMessage message) {
-		await Task.Delay(TimeSpan.FromSeconds(1));
 		logger.LogInformation("New Vehicle: {message}", message);
+		await Task.Delay(TimeSpan.FromMilliseconds(Random.Shared.Next(1000)));
+		var priceRequest = new PriceRequest {
+			Year = message.Year,
+			Color = message.Color,
+			Make = message.Make,
+			Model = message.Model
+		};
+		var reply = await grpc.GetPriceAsync(priceRequest);
+		logger.LogInformation("Price for new vehicle: {price} {currency}", reply.Price, reply.CurrencyCode);
 	}
 }

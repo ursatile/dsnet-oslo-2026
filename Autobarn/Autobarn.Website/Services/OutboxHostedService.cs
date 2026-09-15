@@ -81,7 +81,7 @@ public class OutboxHostedService(
 				try {
 					var linkedToken
 						= CancellationTokenSource.CreateLinkedTokenSource(workToken, sleepToken).Token;
-					await Task.Delay(TimeSpan.FromSeconds(30), sleepToken);
+					await Task.Delay(TimeSpan.FromSeconds(30), linkedToken);
 				} catch (OperationCanceledException) {
 					logger.LogDebug("WAKEY WAKEY! Let's go to work!");
 				}
